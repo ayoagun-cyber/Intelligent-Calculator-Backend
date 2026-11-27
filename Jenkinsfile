@@ -137,7 +137,7 @@ trap 'docker logout "$ECR_REGISTRY" >/dev/null 2>&1 || true' EXIT
     attempt=$((attempt + 1))
     sleep 10
   done
-) 9>/tmp/calculator-docker-prune.lock
+) 9>/tmp/calculator-docker-prune-deploy.lock
 docker pull "$IMAGE_SHA"
 docker pull "$IMAGE_LATEST"
 docker network create calculator >/dev/null 2>&1 || true
