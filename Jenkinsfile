@@ -13,6 +13,12 @@ pipeline {
     disableConcurrentBuilds()
     timeout(time: 30, unit: 'MINUTES')
   }
+  triggers {
+    // GitHub POSTs /github-webhook/ on each push.
+    githubPush()
+    // Backup if GitHub cannot reach port 8080.
+    pollSCM('H/15 * * * *')
+  }
   environment {
     AWS_REGION = 'us-east-1'
     ECR_REGISTRY = '983829774214.dkr.ecr.us-east-1.amazonaws.com'
@@ -131,7 +137,7 @@ trap 'docker logout "$ECR_REGISTRY" >/dev/null 2>&1 || true' EXIT
     attempt=$((attempt + 1))
     sleep 10
   done
-) 9>/tmp/calculator-docker-prune-deploy.lock
+) 9>/tmp/calculator-docker-prune.lock
 docker pull "$IMAGE_SHA"
 docker pull "$IMAGE_LATEST"
 docker network create calculator >/dev/null 2>&1 || true
